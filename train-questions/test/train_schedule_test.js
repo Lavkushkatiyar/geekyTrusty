@@ -13,7 +13,7 @@ import {
   routeForTrain_A,
   routeForTrain_B,
   sortCarriagesByDistanceDesc,
-} from "../src/train.js";
+} from "../src/train_schedule.js";
 
 describe("train tests", () => {
   describe("Route generators", () => {
@@ -96,7 +96,7 @@ describe("train tests", () => {
     const output = buildScheduleOutput({
       trainAArrival: ["A"],
       trainBArrival: ["B"],
-      departure: ["C"],
+      trainABdeparture: ["C"],
     });
 
     const expected = `ARRIVAL TRAIN_A ENGINE A

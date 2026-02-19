@@ -1,2 +1,2 @@
-import { main } from 
-main(Deno.args[0]);
+import { generateTrainSchedule } from "./src/train_schedule.js";
+generateTrainSchedule("input.txt"); //Deno.args[0]

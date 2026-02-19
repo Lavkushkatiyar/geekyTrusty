@@ -43,10 +43,12 @@ const routeForMergeTrain = () => {
   };
 };
 
-const buildScheduleOutput = ({ trainAArrival, trainBArrival, departure }) => {
+const buildScheduleOutput = (
+  { trainAArrival, trainBArrival, trainABdeparture },
+) => {
   const trainAText = trainAArrival.join(" ");
   const trainBText = trainBArrival.join(" ");
-  const departureText = departure.join(" ");
+  const departureText = trainABdeparture.join(" ");
 
   return `ARRIVAL TRAIN_A ENGINE ${trainAText}
 ARRIVAL TRAIN_B ENGINE ${trainBText}
@@ -112,22 +114,23 @@ const extractCarriages = (input) => {
   return { trainACarriages, trainBCarriages };
 };
 
-const main = (inputFilePath) => {
+const generateTrainSchedule = (inputFilePath) => {
   try {
     const input = Deno.readTextFileSync(inputFilePath);
-
     const { trainACarriages, trainBCarriages } = extractCarriages(input);
 
     const mergedCarriagesOrder = generateMergedDeparturePlan(
       trainACarriages,
       trainBCarriages,
     );
-    if (mergedCarriagesOrder.trainABdeparture.length === 0) { //
+
+    if (mergedCarriagesOrder.trainABdeparture.length === 0) {
       console.log("JOURNEY_ENDED");
       return;
     }
 
     const mergedSchedule = buildScheduleOutput(mergedCarriagesOrder);
+
     console.log(mergedSchedule);
   } catch {
     console.error("Error: program fails ");
@@ -140,7 +143,7 @@ export {
   extractCarriages,
   filterCarriagesBeyondMergePoint,
   generateMergedDeparturePlan,
-  main,
+  generateTrainSchedule,
   mergeTrainsCarriages,
   parseCarriages,
   routeForMergeTrain,
