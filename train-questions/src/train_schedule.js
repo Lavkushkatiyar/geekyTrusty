@@ -1,140 +1,135 @@
-const routeForTrain_B = () => {
-  return {
-    "TVC": 0,
-    "SRR": 300,
-    "MAQ": 600,
-    "MAO": 1000,
-    "PNE": 1400,
-    "HYB": 2000,
-    "NGP": 2400,
-    "ITJ": 2700,
-    "BPL": 2800,
-    "PTA": 3800,
-    "NJP": 4200,
-    "GHY": 4700,
-  };
-};
+const TRAIN_B_ROUTE = Object.freeze({
+  TVC: 0,
+  SRR: 300,
+  MAQ: 600,
+  MAO: 1000,
+  PNE: 1400,
+  HYB: 2000,
+  NGP: 2400,
+  ITJ: 2700,
+  BPL: 2800,
+  PTA: 3800,
+  NJP: 4200,
+  GHY: 4700,
+});
 
-const routeForTrain_A = () => {
-  return {
-    "CHN": 0,
-    "SLM": 350,
-    "BLR": 550,
-    "KRN": 900,
-    "HYB": 1200,
-    "NGP": 1600,
-    "ITJ": 1900,
-    "BPL": 2000,
-    "AGA": 2500,
-    "NDL": 2700,
-  };
-};
+const TRAIN_A_ROUTE = Object.freeze({
+  CHN: 0,
+  SLM: 350,
+  BLR: 550,
+  KRN: 900,
+  HYB: 1200,
+  NGP: 1600,
+  ITJ: 1900,
+  BPL: 2000,
+  AGA: 2500,
+  NDL: 2700,
+});
 
-const routeForMergeTrain = () => {
-  return {
-    "NGP": 1600,
-    "ITJ": 1900,
-    "BPL": 2000,
-    "AGA": 2500,
-    "NDL": 2700,
-    "PTA": 3800,
-    "NJP": 4200,
-    "GHY": 4700,
-  };
-};
+const MERGED_TRAIN_ROUTE = Object.freeze({
+  NGP: 1600,
+  ITJ: 1900,
+  BPL: 2000,
+  AGA: 2500,
+  NDL: 2700,
+  PTA: 3800,
+  NJP: 4200,
+  GHY: 4700,
+});
 
-const buildScheduleOutput = (
-  { trainAArrival, trainBArrival, trainABdeparture },
-) => {
-  const trainAText = trainAArrival.join(" ");
-  const trainBText = trainBArrival.join(" ");
-  const departureText = trainABdeparture.join(" ");
+const sortCarriagesByDistanceDesc = (carriages, route) =>
+  [...carriages].sort((a, b) => route[b] - route[a]);
 
-  return `ARRIVAL TRAIN_A ENGINE ${trainAText}
-ARRIVAL TRAIN_B ENGINE ${trainBText}
-DEPARTURE TRAIN_AB ENGINE ENGINE ${departureText}`;
-};
-
-const sortCarriagesByDistanceDesc = (carriages, route) => { // name
-  return [...carriages].sort((carriageA, carriageB) =>
-    route[carriageB] - route[carriageA]
-  );
-};
-
-const mergeTrainsCarriages = (trainACarriages, trainBCarriages) => {
-  return trainACarriages.concat(trainBCarriages);
-};
+const mergeTrainsCarriages = (trainACarriages, trainBCarriages) =>
+  trainACarriages.concat(trainBCarriages);
 
 const filterCarriagesBeyondMergePoint = (
   carriages,
   route,
   mergeStation = "HYB",
 ) => {
-  const mergeStationDistance = route[mergeStation];
-
-  const isAfterMergePoint = (carriage) =>
-    // function inside a function
-    route[carriage] > mergeStationDistance;
-
-  return carriages.filter(isAfterMergePoint);
+  const mergeDistance = route[mergeStation];
+  return carriages.filter((carriage) => route[carriage] > mergeDistance);
 };
 
 const generateMergedDeparturePlan = (trainACarriages, trainBCarriages) => {
-  const trainARoute = routeForTrain_A();
-  const trainBRoute = routeForTrain_B();
-  const trainABRoute = routeForMergeTrain();
   const trainAArrival = filterCarriagesBeyondMergePoint(
     trainACarriages,
-    trainARoute,
+    TRAIN_A_ROUTE,
   );
 
   const trainBArrival = filterCarriagesBeyondMergePoint(
     trainBCarriages,
-    trainBRoute,
+    TRAIN_B_ROUTE,
   );
 
-  const mergeTrain = mergeTrainsCarriages(trainAArrival, trainBArrival);
+  const merged = mergeTrainsCarriages(trainAArrival, trainBArrival);
+
   const trainABdeparture = sortCarriagesByDistanceDesc(
-    mergeTrain,
-    trainABRoute,
+    merged,
+    MERGED_TRAIN_ROUTE,
   );
 
   return { trainAArrival, trainBArrival, trainABdeparture };
 };
 
+const buildScheduleOutput = ({
+  trainAArrival,
+  trainBArrival,
+  trainABdeparture,
+}) => {
+  const trainAText = trainAArrival.join(" ");
+  const trainBText = trainBArrival.join(" ");
+  const departureText = trainABdeparture.join(" ");
+
+  return `ARRIVAL TRAIN_A ENGINE ${trainAText}\n\nARRIVAL TRAIN_B ENGINE ${trainBText}\n\nDEPARTURE TRAIN_AB ENGINE ENGINE ${departureText}`;
+};
+
 const parseCarriages = (train) => {
-  const [_trainName, _engine, ...carriages] = train.trim().split(" ");
+  const [, , ...carriages] = train.trim().split(" ");
   return carriages;
 };
 
 const extractCarriages = (input) => {
-  const [trainA, trainB] = input.trim().split(/\r?\n/);
-  const trainACarriages = parseCarriages(trainA);
-  const trainBCarriages = parseCarriages(trainB);
-  return { trainACarriages, trainBCarriages };
+  const [trainA, trainB] = input.trim()
+    .split(/\r?\n/)
+    .filter(Boolean);
+
+  return {
+    trainACarriages: parseCarriages(trainA),
+    trainBCarriages: parseCarriages(trainB),
+  };
+};
+
+const readInputFile = (inputFilePath) => Deno.readTextFileSync(inputFilePath);
+
+const prepareScheduleFromInput = (fileContent) => {
+  const { trainACarriages, trainBCarriages } = extractCarriages(fileContent);
+
+  return generateMergedDeparturePlan(
+    trainACarriages,
+    trainBCarriages,
+  );
+};
+
+const printScheduleOrEnd = (schedule) => {
+  if (!schedule.trainABdeparture?.length) {
+    console.log("JOURNEY_ENDED");
+    return;
+  }
+
+  console.log(buildScheduleOutput(schedule));
 };
 
 const generateTrainSchedule = (inputFilePath) => {
   try {
-    const input = Deno.readTextFileSync(inputFilePath);
-    const { trainACarriages, trainBCarriages } = extractCarriages(input);
-
-    const mergedCarriagesOrder = generateMergedDeparturePlan(
-      trainACarriages,
-      trainBCarriages,
-    );
-
-    if (mergedCarriagesOrder.trainABdeparture.length === 0) {
-      console.log("JOURNEY_ENDED");
-      return;
-    }
-
-    const mergedSchedule = buildScheduleOutput(mergedCarriagesOrder);
-
-    console.log(mergedSchedule);
-  } catch {
-    console.error("Error: program fails ");
-    Deno.exit(1);
+    const journeyInput = readInputFile(inputFilePath);
+    const schedule = prepareScheduleFromInput(journeyInput);
+    printScheduleOrEnd(schedule);
+    return Deno.exit(0);
+  } catch (err) {
+    console.error("Error: program failed", err?.message ?? "");
+    return Deno.exit(1);
   }
 };
 
@@ -146,8 +141,5 @@ export {
   generateTrainSchedule,
   mergeTrainsCarriages,
   parseCarriages,
-  routeForMergeTrain,
-  routeForTrain_A,
-  routeForTrain_B,
   sortCarriagesByDistanceDesc,
 };

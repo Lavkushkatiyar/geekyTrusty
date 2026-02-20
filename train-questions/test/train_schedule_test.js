@@ -9,30 +9,34 @@ import {
   generateMergedDeparturePlan,
   mergeTrainsCarriages,
   parseCarriages,
-  routeForMergeTrain,
-  routeForTrain_A,
-  routeForTrain_B,
   sortCarriagesByDistanceDesc,
 } from "../src/train_schedule.js";
 
+const TRAIN_A_ROUTE = Object.freeze({
+  CHN: 0,
+  SLM: 350,
+  BLR: 550,
+  KRN: 900,
+  HYB: 1200,
+  NGP: 1600,
+  ITJ: 1900,
+  BPL: 2000,
+  AGA: 2500,
+  NDL: 2700,
+});
+
+const MERGED_TRAIN_ROUTE = Object.freeze({
+  NGP: 1600,
+  ITJ: 1900,
+  BPL: 2000,
+  AGA: 2500,
+  NDL: 2700,
+  PTA: 3800,
+  NJP: 4200,
+  GHY: 4700,
+});
+
 describe("train tests", () => {
-  describe("Route generators", () => {
-    it("routeForTrain_A returns correct distance", () => {
-      const route = routeForTrain_A();
-      assertEquals(route["HYB"], 1200);
-    });
-
-    it("routeForTrain_B returns correct distance", () => {
-      const route = routeForTrain_B();
-      assertEquals(route["NGP"], 2400);
-    });
-
-    it("routeForMergeTrain returns merge route", () => {
-      const route = routeForMergeTrain();
-      assertEquals(route["NJP"], 4200);
-    });
-  });
-
   describe("Parsing functions", () => {
     it("parseCarriages extracts carriages", () => {
       const result = parseCarriages("TRAIN_A ENGINE A B C");
@@ -40,7 +44,7 @@ describe("train tests", () => {
     });
 
     it("extractCarriages extracts both trains", () => {
-      const input = "TRAIN_A ENGINE A B\nTRAIN_B ENGINE X Y";
+      const input = "TRAIN_A ENGINE A B\n\nTRAIN_B ENGINE X Y";
 
       const result = extractCarriages(input);
 
@@ -55,22 +59,18 @@ describe("train tests", () => {
   });
 
   it("sortCarriagesByDistanceDesc sorts descending", () => {
-    const route = routeForMergeTrain();
-
     const result = sortCarriagesByDistanceDesc(
       ["NGP", "NJP", "BPL"],
-      route,
+      MERGED_TRAIN_ROUTE,
     );
 
     assertEquals(result, ["NJP", "BPL", "NGP"]);
   });
 
   it("filterCarriagesBeyondMergePoint removes before HYB", () => {
-    const route = routeForTrain_A();
-
     const result = filterCarriagesBeyondMergePoint(
       ["CHN", "HYB", "NGP", "ITJ"],
-      route,
+      TRAIN_A_ROUTE,
     );
 
     assertEquals(result, ["NGP", "ITJ"]);
@@ -99,8 +99,8 @@ describe("train tests", () => {
       trainABdeparture: ["C"],
     });
 
-    const expected = `ARRIVAL TRAIN_A ENGINE A
-ARRIVAL TRAIN_B ENGINE B
+    const expected = `ARRIVAL TRAIN_A ENGINE A\n
+ARRIVAL TRAIN_B ENGINE B\n
 DEPARTURE TRAIN_AB ENGINE ENGINE C`;
 
     assertEquals(output, expected);
