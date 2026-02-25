@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+
 const TRAIN_B_ROUTE = Object.freeze({
   TVC: 0,
   SRR: 300,
@@ -101,7 +105,10 @@ const extractCarriages = (input) => {
   };
 };
 
-const readInputFile = (inputFilePath) => Deno.readTextFileSync(inputFilePath);
+const readInputFile = (inputFilePath) => {
+  if (inputFilePath) return fs.readFileSync(inputFilePath, "utf8");
+  return fs.readFileSync(0, "utf8");
+};
 
 const prepareScheduleFromInput = (fileContent) => {
   const { trainACarriages, trainBCarriages } = extractCarriages(fileContent);
@@ -126,10 +133,11 @@ const generateTrainSchedule = (inputFilePath) => {
     const journeyInput = readInputFile(inputFilePath);
     const schedule = prepareScheduleFromInput(journeyInput);
     printScheduleOrEnd(schedule);
-    return Deno.exit(0);
+    return process.exit(0);
   } catch (err) {
     console.error("Error: program failed", err?.message ?? "");
-    return Deno.exit(1);
+    return process.exit(1);
   }
 };
-generateTrainSchedule(Deno.args[0]);
+
+generateTrainSchedule(process.argv[2]);

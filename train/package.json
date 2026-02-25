@@ -1,0 +1,8 @@
+{
+  "name": "train",
+  "version": "1.0.0",
+  "main": "train.js",
+  "scripts": {
+    "start": "node train.js"
+  }
+}
