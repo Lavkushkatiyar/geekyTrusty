@@ -11,6 +11,8 @@ const TRAIN_B_ROUTE = Object.freeze({
   PTA: 3800,
   NJP: 4200,
   GHY: 4700,
+  AGA: 2500,
+  NDL: 2700,
 });
 
 const TRAIN_A_ROUTE = Object.freeze({
@@ -24,18 +26,19 @@ const TRAIN_A_ROUTE = Object.freeze({
   BPL: 2000,
   AGA: 2500,
   NDL: 2700,
-});
-
-const MERGED_TRAIN_ROUTE = Object.freeze({
-  NGP: 1600,
-  ITJ: 1900,
-  BPL: 2000,
-  AGA: 2500,
-  NDL: 2700,
   PTA: 3800,
   NJP: 4200,
   GHY: 4700,
 });
+
+const MERGED_TRAIN_ROUTE = Object.freeze(
+  Object.fromEntries(
+    ["NGP", "ITJ", "BPL", "AGA", "NDL", "PTA", "NJP", "GHY"].map((station) => [
+      station,
+      TRAIN_A_ROUTE[station] ?? TRAIN_B_ROUTE[station],
+    ]),
+  ),
+);
 
 module.exports = {
   TRAIN_A_ROUTE,

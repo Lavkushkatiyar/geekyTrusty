@@ -1,8 +1,14 @@
 {
   "name": "train",
   "version": "1.0.0",
-  "main": "train.js",
+  "description": "Geektrust Train Bogie Merger Challenge",
+  "main": "geektrust.js",
   "scripts": {
-    "start": "node train.js"
+    "start": "node geektrust.js",
+    "test": "jest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^29.0.0"
   }
 }

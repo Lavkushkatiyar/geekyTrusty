@@ -4,8 +4,10 @@ const {
   TRAIN_B_ROUTE,
 } = require("../constants/routes.js");
 
-const sortCarriagesByDistanceDesc = (carriages, route) =>
-  [...carriages].sort((a, b) => route[b] - route[a]);
+const sortCarriagesByDistanceDesc = (carriages, route) => {
+  const filteredHYB = [...carriages].filter((carriage) => carriage !== "HYB");
+  return filteredHYB.sort((a, b) => route[b] - route[a]);
+};
 
 const mergeTrainsCarriages = (trainACarriages, trainBCarriages) =>
   trainACarriages.concat(trainBCarriages);

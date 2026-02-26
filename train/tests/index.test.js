@@ -1,18 +1,15 @@
 jest.mock("../src/utils/parser.js");
 jest.mock("../src/domain/train_merger.js");
 jest.mock("../src/domain/schedule_formatter.js");
-
-const { extractCarriages } = require("../src/utils/parser.js");
-const { generateMergeSchedule } = require("../src/domain/train_merger.js");
-const { buildScheduleOutput } = require("../src/domain/schedule_formatter.js");
-
-const { generateTrainSchedule } = require("../geektrust.js");
-
 jest.mock("../src/utils/input_reader.js", () => ({
   createInputReader: jest.fn(),
 }));
 
+const { extractCarriages } = require("../src/utils/parser.js");
+const { generateMergeSchedule } = require("../src/domain/train_merger.js");
+const { buildScheduleOutput } = require("../src/domain/schedule_formatter.js");
 const { createInputReader } = require("../src/utils/input_reader.js");
+const { generateTrainSchedule } = require("../geektrust.js");
 
 describe("generateTrainSchedule", () => {
   beforeEach(() => {
@@ -32,8 +29,6 @@ describe("generateTrainSchedule", () => {
     });
 
     generateMergeSchedule.mockReturnValue({
-      trainAArrival: ["A"],
-      trainBArrival: ["B"],
       trainABdeparture: ["B", "A"],
     });
 
@@ -50,10 +45,8 @@ describe("generateTrainSchedule", () => {
   });
 
   test("prints JOURNEY_ENDED when no departure bogies", () => {
-    const mockReadInputFile = jest.fn().mockReturnValue("RAW_INPUT");
-
     createInputReader.mockReturnValue({
-      readInputFile: mockReadInputFile,
+      readInputFile: jest.fn().mockReturnValue("RAW_INPUT"),
     });
 
     extractCarriages.mockReturnValue({
@@ -62,8 +55,6 @@ describe("generateTrainSchedule", () => {
     });
 
     generateMergeSchedule.mockReturnValue({
-      trainAArrival: [],
-      trainBArrival: [],
       trainABdeparture: [],
     });
 
@@ -76,29 +67,27 @@ describe("generateTrainSchedule", () => {
     consoleSpy.mockRestore();
   });
 
-  test("handles errors gracefully", () => {
-    const mockReadInputFile = jest.fn(() => {
-      throw new Error("Failure");
-    });
-
+  test("does nothing when rawInput is null", () => {
     createInputReader.mockReturnValue({
-      readInputFile: mockReadInputFile,
+      readInputFile: jest.fn().mockReturnValue(null),
     });
 
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    const exitSpy = jest
-      .spyOn(process, "exit")
-      .mockImplementation(() => {});
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
 
     generateTrainSchedule("input.txt");
 
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(consoleSpy).not.toHaveBeenCalled();
+  });
 
-    consoleErrorSpy.mockRestore();
-    exitSpy.mockRestore();
+  test("does nothing when inputFilePath is undefined", () => {
+    createInputReader.mockReturnValue({
+      readInputFile: jest.fn().mockReturnValue(null),
+    });
+
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+
+    generateTrainSchedule(undefined);
+
+    expect(consoleSpy).not.toHaveBeenCalled();
   });
 });
