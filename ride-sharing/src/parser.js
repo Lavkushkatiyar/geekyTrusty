@@ -1,38 +1,40 @@
-const drivers = {};
-const riders = {};
-const rides = {};
-const match = {};
-const bill = {};
+const drivers = [];
+const riders = [];
+const startRides = [];
+const endRides = [];
+const match = [];
+const bill = [];
 
 const handleAddDriver = ([id, x, y]) => {
-  drivers[id] = { x: Number(x), y: Number(y) };
+  const driver = { id, x: Number(x), y: Number(y) };
+  drivers.push(driver);
   return drivers;
 };
 
 const handleAddRider = ([id, x, y]) => {
-  riders[id] = { x: Number(x), y: Number(y) };
+  riders.push({ id, x: Number(x), y: Number(y) });
   return riders;
 };
 
 const handleMatch = ([riderId]) => {
-  match[riderId] = riderId;
+  match.push(riderId);
   return match;
 };
 
 const handleStartRide = ([rideId, driverId, riderId]) => {
-  rides[rideId] = { driverId, riderId, started: true };
-  return rides;
+  startRides.push({ rideId, driverId, riderId, started: true });
+  return startRides;
 };
 
 const handleStopRide = ([rideId, x, y, time]) => {
-  rides[rideId] = {
-    ...rides[rideId],
+  endRides.push({
+    rideId,
     endX: Number(x),
     endY: Number(y),
     time: Number(time),
     stopped: true,
-  };
-  return rides;
+  });
+  return endRides;
 };
 
 const handleBill = ([billData]) => {
