@@ -21,8 +21,8 @@ const handleMatch = ([riderId]) => {
   return match;
 };
 
-const handleStartRide = ([rideId, driverId, riderId]) => {
-  startRides.push({ rideId, driverId, riderId, started: true });
+const handleStartRide = ([rideId, nthDriver, riderId]) => {
+  startRides.push({ rideId, nthDriver, riderId });
   return startRides;
 };
 
@@ -32,7 +32,6 @@ const handleStopRide = ([rideId, x, y, time]) => {
     endX: Number(x),
     endY: Number(y),
     time: Number(time),
-    stopped: true,
   });
   return endRides;
 };
