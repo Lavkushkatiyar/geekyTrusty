@@ -1,20 +1,32 @@
-const { parser } = require("./src/parser.js");
+const { parseRideCommands } = require("./src/utils/parser.js");
 const { readFile } = require("./src/utils/input_reader.js");
 const { findMatchedDriver } = require("./src/domain/getDrivers.js");
 const { handleStartRide, handleStopRide } = require("./src/domain/rides.js");
 const { getBillData } = require("./src/compute/billData.js");
 const main = (path) => {
   const inputData = readFile(path);
-  const { ADD_DRIVER, ADD_RIDER, START_RIDE, STOP_RIDE, MATCH, BILL } = parser(
-    inputData,
+  const {
+    driverRegistrations,
+    riderRegistrations,
+    rideStartRequests,
+    rideStopRequests,
+    matchRequests,
+    billRequests,
+  } = parseRideCommands(inputData);
+
+  const matchedDriver = findMatchedDriver(
+    driverRegistrations,
+    riderRegistrations,
+    matchRequests,
   );
-  const matchedDriver = findMatchedDriver(ADD_DRIVER, ADD_RIDER, MATCH);
 
-  const startRide = handleStartRide(START_RIDE, matchedDriver);
+  const startRide = handleStartRide(rideStartRequests, matchedDriver);
 
-  const stopRide = handleStopRide(STOP_RIDE, startRide);
+  const stopRide = handleStopRide(rideStopRequests, startRide);
 
-  const billData = getBillData(BILL, stopRide, ADD_RIDER);
+  const billData = getBillData(billRequests, stopRide, riderRegistrations);
   console.log(billData);
+
+  // console.log(matchedDriver, startRide, stopRide, billData);
 };
 main();

@@ -5,14 +5,14 @@ const travelCost = {
   serviceTax: 20,
 };
 
-const calculateDistance = (startX, startY, endX, endY) =>
-  Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2);
+const calculateDistance = (startX, startY, destinationX, destinationY) =>
+  Math.sqrt((destinationX - startX) ** 2 + (destinationY - startY) ** 2);
 
-const calculateSubtotal = (distance, time, costConfig) => {
+const calculateSubtotal = (distance, timeInMinutes, costConfig) => {
   return (
     costConfig.base +
     distance * costConfig.perKm +
-    time * costConfig.perMinute
+    timeInMinutes * costConfig.perMinute
   );
 };
 
@@ -21,17 +21,18 @@ const applyServiceTax = (amount, taxPercent) => {
 };
 
 const calculateRideFare = (rideData, rider, costConfig) => {
-  const { endX, endY, time, rideId } = rideData.endRide;
+  const { destinationX, destinationY, timeInMinutes, rideId } =
+    rideData.endRide;
 
-  const distance = calculateDistance(rider.x, rider.y, endX, endY);
-  const subtotal = calculateSubtotal(distance, time, costConfig);
+  const distance = calculateDistance(
+    rider.x,
+    rider.y,
+    destinationX,
+    destinationY,
+  );
+  const subtotal = calculateSubtotal(distance, timeInMinutes, costConfig);
   const total = applyServiceTax(subtotal, costConfig.serviceTax);
-
-  return {
-    rideId,
-    driver: rideData.driverId,
-    amount: total.toFixed(2),
-  };
+  return { rideId, driver: rideData.driverId, amount: total.toFixed(2) };
 };
 
 const getBillData = (_BILL, endRideData, riders) =>
