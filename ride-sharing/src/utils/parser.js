@@ -16,7 +16,7 @@ const registerDriver = ([driverId, x, y]) => {
 
 const registerRider = ([riderId, x, y]) => {
   riderRegistrations.push({
-    riderId,
+   riderId: riderId.trim(),
     x: Number(x),
     y: Number(y),
   });
@@ -24,7 +24,7 @@ const registerRider = ([riderId, x, y]) => {
 };
 
 const registerMatchRequest = ([riderId]) => {
-  matchRequests.push(riderId);
+  matchRequests.push(riderId.trim());
   return matchRequests;
 };
 
@@ -32,7 +32,7 @@ const registerRideStartRequest = ([rideId, driverRank, riderId]) => {
   rideStartRequests.push({
     rideId,
     driverRank,
-    riderId,
+   riderId: riderId.trim(),
   });
   return rideStartRequests;
 };
@@ -78,7 +78,7 @@ const parseCommandLines = (inputLines) => {
 };
 
 const parseRideCommands = (rawInput) => {
-  const inputLines = rawInput.split("\n");
+  const inputLines = rawInput.split("\n")
   return parseCommandLines(inputLines);
 };
 

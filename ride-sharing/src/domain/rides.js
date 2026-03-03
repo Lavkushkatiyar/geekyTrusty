@@ -1,6 +1,5 @@
 const handleStartRide = (rideCoordinate, drivers) => {
   const matchedDrivers = [];
-
   for (const { rideId, driverRank, riderId } of rideCoordinate) {
     const matchedDriver = drivers.find((driver) => driver.match === riderId);
     const driver = matchedDriver.driverInRange[driverRank - 1];

@@ -1,0 +1,13 @@
+{
+  "name": "ride-sharing-service",
+  "version": "1.0.0",
+  "description": "Geektrust Ride Sharing Service Solution",
+  "main": "geektrust.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node geektrust.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

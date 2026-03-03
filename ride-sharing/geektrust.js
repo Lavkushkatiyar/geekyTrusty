@@ -18,14 +18,15 @@ const main = (inputFilePath) => {
     billRequests,
   } = parseRideCommands(rawInput);
 
+
+
   const matchedDriver = findMatchedDriver(
     driverRegistrations,
     riderRegistrations,
     matchRequests,
   );
-
   const startRide = handleStartRide(rideStartRequests, matchedDriver);
-
+  
   const stopRide = handleStopRide(rideStopRequests, startRide);
 
   const billData = getBillData(billRequests, stopRide, riderRegistrations);

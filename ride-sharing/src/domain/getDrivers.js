@@ -20,11 +20,11 @@ const getDriversInRange = (rider, drivers) => {
   return sortDriverOnDistance(matchedDrivers);
 };
 
-const findMatchedDriver = (drivers, riders, matches) => {
+const   findMatchedDriver = (drivers, riders, matches) => {
   const matchesDriver = [];
   for (const match of matches) {
     const rider = riders.find(({ riderId }) => riderId === match);
-    const driverInRange = getDriversInRange(rider, drivers);
+      const driverInRange = getDriversInRange(rider, drivers);
     matchesDriver.push({ match, driverInRange });
   }
   return matchesDriver;
