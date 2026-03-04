@@ -29,7 +29,8 @@ const calculateRideFare = (rideData, rider, costConfig) => {
     rider.y,
     destinationX,
     destinationY,
-  );
+  ).toFixed(2);
+
   const subtotal = calculateSubtotal(distance, timeInMinutes, costConfig);
   const total = applyServiceTax(subtotal, costConfig.serviceTax);
   return { rideId, driver: rideData.driverId, amount: total.toFixed(2) };
@@ -37,9 +38,13 @@ const calculateRideFare = (rideData, rider, costConfig) => {
 
 const getBillData = (_BILL, endRideData, riders) =>
   endRideData.map((rideData, index) =>
-    calculateRideFare(rideData, riders[index], travelCost)
+    calculateRideFare(rideData, riders[index], travelCost),
   );
 
 module.exports = {
   getBillData,
+  calculateDistance,
+  calculateSubtotal,
+  applyServiceTax,
+  calculateRideFare,
 };

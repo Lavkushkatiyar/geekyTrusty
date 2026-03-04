@@ -3,11 +3,19 @@
   "version": "1.0.0",
   "description": "Geektrust Ride Sharing Service Solution",
   "main": "geektrust.js",
-  "type": "commonjs",
   "scripts": {
-    "start": "node geektrust.js"
+    "start": "node geektrust.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
 }

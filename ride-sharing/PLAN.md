@@ -44,3 +44,8 @@ BILL{
 <RIDE_ID>
 }
 ```
+
+Error handling is left
+keep the method small
+magic number if found
+i was thinking about writing them into a json file and fetch it
